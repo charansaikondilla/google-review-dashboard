@@ -1,4 +1,4 @@
-$path = "D:\sagar digtial marketing\google review system\google review system"
+$path = $PSScriptRoot
 $port = 8000
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
