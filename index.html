@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Intelligence System - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .section h2 {
+            color: #2563eb;
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-content {
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 18px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .feature {
+            padding: 16px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .feature strong {
+            display: block;
+            color: #2563eb;
+            margin-bottom: 4px;
+        }
+        
+        .feature p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .footer {
+            background: #f9fafb;
+            padding: 24px 40px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        
+        @media (max-width: 768px) {
+            .buttons, .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+            
+            .header, .content, .footer {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Review Intelligence System</h1>
+            <p>Collect reviews, analyze sentiment, and gain insights in real-time</p>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>👋 Welcome</h2>
+                <div class="section-content">
+                    This is a complete review collection and analytics system powered by Zapier, Google Sheets, and Google Apps Script. Collect customer feedback, automatically route positive and negative reviews to separate sheets, and visualize insights through a beautiful dashboard.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🎯 Quick Start</h2>
+                <div class="buttons">
+                    <a href="form.html" class="btn btn-primary">
+                        📝 Submit a Review
+                    </a>
+                    <a href="dashboard.html" class="btn btn-primary">
+                        📊 View Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>✨ Features</h2>
+                <div class="features">
+                    <div class="feature">
+                        <strong>📝 Review Form</strong>
+                        <p>Beautiful, responsive form for collecting customer feedback with star ratings</p>
+                    </div>
+                    <div class="feature">
+                        <strong>🔄 Auto Routing</strong>
+                        <p>Zapier automatically routes positive and negative reviews to separate sheets</p>
+                    </div>
+                    <div class="feature">
+                        <strong>📊 Dashboard</strong>
+                        <p>Real-time analytics with charts, keywords, and smart insights</p>
+                    </div>
+                    <div class="feature">
+                        <strong>🚨 Alerts</strong>
+                        <p>Get notified of critical sentiment changes and trends</p>
+                    </div>
+                    <div class="feature">
+                        <strong>📈 Trends</strong>
+                        <p>Track review volume and sentiment over time</p>
+                    </div>
+                    <div class="feature">
+                        <strong>🔑 Keywords</strong>
+                        <p>Automatically extract and analyze frequently mentioned topics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📚 Documentation</h2>
+                <div class="section-content">
+                    <p>Setup guides and API documentation:</p>
+                    <ul style="margin-left: 20px; margin-top: 12px;">
+                        <li><a href="docs/GOOGLE_APPS_SCRIPT_SETUP.md" style="color: #2563eb;">Google Apps Script Setup</a> - Create the backend API</li>
+                        <li><a href="docs/DASHBOARD_SETUP.md" style="color: #2563eb;">Dashboard Setup</a> - Deploy to GitHub Pages</li>
+                        <li><a href="docs/GOOGLE_SHEETS_SETUP.md" style="color: #2563eb;">Google Sheets Setup</a> - Create data structure</li>
+                        <li><a href="docs/GITHUB_PAGES_DEPLOYMENT.md" style="color: #2563eb;">GitHub Pages Deployment</a> - Host on GitHub</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🏗️ Architecture</h2>
+                <div class="section-content">
+                    <strong>Review Form →</strong> Zapier →  <strong>Google Sheets (2 tabs)</strong> → Google Apps Script API → <strong>Dashboard</strong>
+                    <p style="margin-top: 12px; font-size: 13px; color: #6b7280;">
+                        All data flows through Google services. No backend server required. No CORS issues. Fully serverless architecture.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Review Intelligence System | Powered by Zapier, Google Sheets & Apps Script, GitHub Pages</p>
+        </div>
+    </div>
+</body>
+</html>

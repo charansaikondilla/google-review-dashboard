@@ -1,0 +1,29 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node/npm (if using build tools)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment
+.env
+.env.local
+
+# Editor backups
+*~
+*.bak
+*.tmp
+
+# System
+$RECYCLE.BIN/
+.cache/

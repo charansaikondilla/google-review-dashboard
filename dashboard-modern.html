@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Intelligence Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0B0F19;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+            color: #E2E8F0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            background: linear-gradient(135deg, #38BDF8 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 10px #10B981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            color: #94A3B8;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #F8FAFC;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #64748B;
+        }
+
+        /* Custom Stat Highlights */
+        .stat-card:nth-child(1) .stat-value { color: #38BDF8; }
+        .stat-card:nth-child(2) .stat-value { color: #10B981; }
+        .stat-card:nth-child(3) .stat-value { color: #EF4444; }
+        .stat-card:nth-child(4) .stat-value { color: #F59E0B; }
+
+        /* CHARTS SECTION */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #E2E8F0;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* REVIEWS SECTION */
+        .reviews-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+        }
+
+        .review-container {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .review-container h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #F8FAFC;
+        }
+
+        .review-item {
+            padding: 24px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(5px);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .review-item.negative {
+            border-left: 3px solid #EF4444;
+        }
+
+        .review-item.positive {
+            border-left: 3px solid #10B981;
+        }
+
+        .review-name {
+            font-weight: 700;
+            color: #F8FAFC;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-rating {
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        .review-text {
+            color: #CBD5E1;
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .review-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #64748B;
+        }
+
+        .sentiment-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .sentiment-positive { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .sentiment-negative { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+        .reply-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #E2E8F0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .reply-input:focus {
+            outline: none;
+            border-color: #38BDF8;
+            box-shadow: 0 0 0 1px #38BDF8;
+        }
+
+        .reply-btn {
+            align-self: flex-end;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #38BDF8 0%, #8B5CF6 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .reply-btn:hover { opacity: 0.9; }
+        .reply-btn:disabled { background: #475569; color: #94A3B8; cursor: not-allowed; }
+
+        .replied-badge {
+            font-size: 10px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38BDF8;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* KEYWORDS */
+        .keywords-section {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .keywords-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #F8FAFC;
+        }
+
+        .keywords-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .keyword-badge {
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #38BDF8;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(56, 189, 248, 0.2);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #64748B;
+        }
+
+        .spinner {
+            border: 4px solid rgba(56, 189, 248, 0.1);
+            border-top: 4px solid #38BDF8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ERROR */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .reviews-section {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: #64748B;
+            margin-top: 30px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748B;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #94A3B8;
+        }
+
+        .diagnostic-info {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-left: 4px solid #38BDF8;
+        }
+
+        .last-updated {
+            font-size: 12px;
+            color: #64748B;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <h1>📊 Review Intelligence Core</h1>
+            </div>
+            <div class="header-actions">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="status-text">Connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        <div id="error-container"></div>
+
+        <!-- LOADING STATE -->
+        <div id="loading-state" class="loading">
+            <div class="spinner"></div>
+            <p>Initializing Secure Core...</p>
+        </div>
+
+        <!-- CONTENT -->
+        <div id="content" style="display: none;">
+            <!-- STATS GRID -->
+            <div class="stats-grid">
+                <div class="stat-card stat-neutral">
+                    <div class="stat-label">Total Reviews</div>
+                    <div class="stat-value" id="total-stat">0</div>
+                    <div class="stat-change">Real-time Backend Data</div>
+                </div>
+
+                <div class="stat-card stat-positive">
+                    <div class="stat-label">Positive Reviews</div>
+                    <div class="stat-value" id="positive-count">0</div>
+                    <div class="stat-change" id="positive-pct">0%</div>
+                </div>
+
+                <div class="stat-card stat-negative">
+                    <div class="stat-label">Negative Reviews</div>
+                    <div class="stat-value" id="negative-count">0</div>
+                    <div class="stat-change" id="negative-pct">0%</div>
+                </div>
+
+                <div class="stat-card stat-replied">
+                    <div class="stat-label">Replied Correctly</div>
+                    <div class="stat-value" id="replied-count">0</div>
+                    <div class="stat-change">Total Responses Sent</div>
+                </div>
+            </div>
+
+            <!-- CHARTS -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-title">📊 Review Distribution</div>
+                    <div class="chart-container">
+                        <canvas id="ratingsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">🎯 Sentiment Split</div>
+                    <div class="chart-container">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REVIEWS SECTION -->
+            <div class="reviews-section">
+                <!-- POSITIVE REVIEWS -->
+                <div class="review-container">
+                    <h3>✅ Positive Reviews</h3>
+                    <div id="positive-reviews"></div>
+                </div>
+
+                <!-- NEGATIVE REVIEWS -->
+                <div class="review-container">
+                    <h3>⚠️ Negative Reviews</h3>
+                    <div id="negative-reviews"></div>
+                </div>
+            </div>
+
+            <!-- KEYWORDS -->
+            <div class="keywords-section">
+                <div class="keywords-title">🏷️ Top Keywords</div>
+                <div class="keywords-grid" id="keywords-grid"></div>
+            </div>
+
+            <!-- DIAGNOSTIC INFO -->
+            <div class="diagnostic-info">
+                <strong>📡 Diagnostic Info:</strong><br>
+                Positive Sheet Rows: <span id="diag-positive">0</span> | 
+                Negative Sheet Rows: <span id="diag-negative">0</span> |
+                Data Status: <span id="diag-status">Loading...</span>
+            </div>
+
+            <div class="last-updated">
+                Last updated: <span id="last-updated">Just now</span>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>Real-time Review Intelligence System | Auto-refreshes every 30 seconds</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwdYmoicMWeLvmfzEL2yGHbGgWhu3rNWkYqObRKf1eTmU3ZDVJZG_l24NiUm2TP89pC/exec';
+        let ratingsChart, sentimentChart;
+
+        async function loadData() {
+            try {
+                document.getElementById('loading-state').style.display = 'block';
+                document.getElementById('content').style.display = 'none';
+                document.getElementById('error-container').innerHTML = '';
+                document.getElementById('status-text').textContent = 'Loading...';
+
+                const response = await fetch(API_URL + '?action=all');
+                const data = await response.json();
+
+                if (data.error) {
+                    showError('❌ ' + data.message);
+                    document.getElementById('loading-state').style.display = 'block';
+                    document.getElementById('content').style.display = 'none';
+                    return;
+                }
+
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('status-text').textContent = 'Live & Connected ✓';
+
+                // Update stats
+                const stats = data.stats || {};
+                document.getElementById('total-stat').textContent = stats.totalReviews || 0;
+                document.getElementById('positive-count').textContent = stats.positiveCount || 0;
+                document.getElementById('positive-pct').textContent = (stats.positivePercent || 0) + '%';
+                document.getElementById('negative-count').textContent = stats.negativeCount || 0;
+                document.getElementById('negative-pct').textContent = (stats.negativePercent || 0) + '%';
+                document.getElementById('replied-count').textContent = stats.repliedCount || 0;
+
+                // Diagnostic
+                document.getElementById('diag-positive').textContent = data.meta?.sourceRowCounts?.positiveRows || 0;
+                document.getElementById('diag-negative').textContent = data.meta?.sourceRowCounts?.negativeRows || 0;
+                document.getElementById('diag-status').textContent = stats.totalReviews > 0 ? '✅ Data Found' : '⚠️ No Data';
+                
+                if (stats.totalReviews === 0) {
+                    showError('⚠️ No data found. Check sheet tab names.');
+                }
+
+                // Update charts
+                updateCharts(data.stats.ratingDistribution || {});
+
+                // Display reviews
+                displayReviews(data.positive || [], data.negative || []);
+
+                // Extract keywords
+                extractKeywords(data.positive || [], data.negative || []);
+
+                // Update timestamp
+                document.getElementById('last-updated').textContent = new Date(data.timestamp).toLocaleTimeString();
+
+            } catch (error) {
+                showError('❌ Connection Error: ' + error.message);
+                document.getElementById('loading-state').style.display = 'block';
+                document.getElementById('content').style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-container');
+            errorDiv.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        function updateCharts(distribution) {
+            const ctx1 = document.getElementById('ratingsChart').getContext('2d');
+            const ctx2 = document.getElementById('sentimentChart').getContext('2d');
+
+            if (ratingsChart) ratingsChart.destroy();
+            if (sentimentChart) sentimentChart.destroy();
+
+            ratingsChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['1⭐', '2⭐', '3⭐', '4⭐', '5⭐'],
+                    datasets: [{
+                        label: 'Number of Reviews',
+                        data: [
+                            distribution['1'] || 0,
+                            distribution['2'] || 0,
+                            distribution['3'] || 0,
+                            distribution['4'] || 0,
+                            distribution['5'] || 0
+                        ],
+                        backgroundColor: [
+                            '#dc3545', '#ff7675', '#ffc107', '#80e1a0', '#28a745'
+                        ],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            const positive = Object.values(distribution || {}).slice(3).reduce((a, b) => a + b, 0);
+            const negative = Object.values(distribution || {}).slice(0, 3).reduce((a, b) => a + b, 0);
+            const neutral = (distribution['3'] || 0);
+
+            sentimentChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive (4-5⭐)', 'Negative (1-2⭐)'],
+                    datasets: [{
+                        data: [positive, negative],
+                        backgroundColor: ['#28a745', '#dc3545'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 14 } } }
+                    }
+                }
+            });
+        }
+
+        function displayReviews(positive, negative) {
+            const posDiv = document.getElementById('positive-reviews');
+            const negDiv = document.getElementById('negative-reviews');
+
+            const renderReview = (r, type) => `
+                <div class="review-item ${type}" id="review-${r.hash}">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="review-name">👤 ${r.name} ${r.replyStatus === 'Replied' ? '<span class="replied-badge">Replied</span>' : ''}</div>
+                        <div class="review-rating">${'⭐'.repeat(r.rating)}</div>
+                    </div>
+                    <div class="review-text">"${r.comment}"</div>
+                    <div class="review-meta">
+                        <span>${new Date(r.timestamp).toLocaleDateString()}</span>
+                        <span class="sentiment-badge sentiment-${type}">${r.sentiment || type.toUpperCase()}</span>
+                    </div>
+                    <div class="reply-section">
+                        <textarea class="reply-input" placeholder="Type your response...">${r.replyText || (type === 'positive' ? 'Thank you so much for your kind words! We hope to see you again soon.' : 'We are sorry for your experience. We would love to make it right for you.')}</textarea>
+                        <button class="reply-btn" onclick="sendReply('${r.hash}', '${type}', this)">🚀 Send Auto-Reply</button>
+                    </div>
+                </div>
+            `;
+
+            posDiv.innerHTML = positive.length === 0 
+                ? '<div class="empty-state">No positive reviews yet</div>'
+                : positive.map(r => renderReview(r, 'positive')).join('');
+
+            negDiv.innerHTML = negative.length === 0
+                ? '<div class="empty-state">No negative reviews yet</div>'
+                : negative.map(r => renderReview(r, 'negative')).join('');
+        }
+
+        async function sendReply(hash, type, btn) {
+            const container = document.getElementById(`review-${hash}`);
+            const replyText = container.querySelector('.reply-input').value;
+            
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Apps Script web app often requires no-cors for simple POST or redirects handling
+                    body: JSON.stringify({
+                        action: 'sendReply',
+                        hash: hash,
+                        type: type,
+                        reply: replyText
+                    })
+                });
+
+                // Since we use no-cors, we can't reliably read the body, 
+                // but we can assume success if the fetch doesn't throw.
+                btn.textContent = '✅ Sent';
+                btn.style.background = '#28a745';
+                
+                // Add badge if not present
+                if (!container.querySelector('.replied-badge')) {
+                    const nameDiv = container.querySelector('.review-name');
+                    nameDiv.innerHTML += '<span class="replied-badge">Replied</span>';
+                }
+            } catch (error) {
+                console.error('Error sending reply:', error);
+                btn.textContent = '❌ Failed';
+                btn.disabled = false;
+            }
+        }
+
+        function extractKeywords(positive, negative) {
+            const keywords = new Map();
+            const commonWords = ['the', 'a', 'an', 'and', 'or', 'is', 'was', 'it', 'to', 'of', 'in', 'on', 'at', 'for', 'with', 'this', 'that'];
+
+            const allReviews = [...positive, ...negative];
+            allReviews.forEach(r => {
+                const words = r.comment.toLowerCase().match(/\b\w+\b/g) || [];
+                words.filter(w => w.length > 3 && !commonWords.includes(w)).forEach(w => {
+                    keywords.set(w, (keywords.get(w) || 0) + 1);
+                });
+            });
+
+            const topKeywords = Array.from(keywords.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([word, count]) => word);
+
+            document.getElementById('keywords-grid').innerHTML = topKeywords.length === 0
+                ? '<p>No keywords yet</p>'
+                : topKeywords.map(kw => `<div class="keyword-badge">${kw}</div>`).join('');
+        }
+
+        // Load on startup
+        loadData();
+    </script>
+</body>
+</html>

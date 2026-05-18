@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background: #0056b3; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Connection Test</h1>
+        <button onclick="testAPI()">Test API</button>
+        <button onclick="testPositive()">Test Positive Only</button>
+        <button onclick="testNegative()">Test Negative Only</button>
+        
+        <div id="status"></div>
+        <div id="stats"></div>
+        <h2>Full Response:</h2>
+        <pre id="response">Waiting for test...</pre>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwdYmoicMWeLvmfzEL2yGHbGgWhu3rNWkYqObRKf1eTmU3ZDVJZG_l24NiUm2TP89pC/exec';
+
+        async function testAPI() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            const statsDiv = document.getElementById('stats');
+            
+            try {
+                statusDiv.innerHTML = '<p class="success">Testing API...</p>';
+                const response = await fetch(API_URL + '?action=all');
+                const data = await response.json();
+                
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                
+                if (data.error) {
+                    statusDiv.innerHTML = `<p class="error">Error: ${data.message}</p>`;
+                } else {
+                    const stats = data.stats || {};
+                    statsDiv.innerHTML = `
+                        <div class="stats">
+                            <div class="stat-box">
+                                <div class="stat-value">${stats.total || 0}</div>
+                                <div class="stat-label">Total Reviews</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" style="color: green;">${stats.positiveCount || 0}</div>
+                                <div class="stat-label">Positive Reviews</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" style="color: orange;">${stats.negativeCount || 0}</div>
+                                <div class="stat-label">Negative Reviews</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" style="color: #ff9800;">${stats.averageRating || 0}</div>
+                                <div class="stat-label">Average Rating</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" style="color: green;">${stats.positivePercentage || 0}%</div>
+                                <div class="stat-label">Positive %</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" style="color: orange;">${stats.negativePercentage || 0}%</div>
+                                <div class="stat-label">Negative %</div>
+                            </div>
+                        </div>
+                    `;
+                    statusDiv.innerHTML = '<p class="success">SUCCESS! API is working perfectly!</p>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">ERROR: ${error.message}</p>`;
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testPositive() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            try {
+                statusDiv.innerHTML = '<p class="success">Testing Positive Reviews...</p>';
+                const response = await fetch(API_URL + '?action=positive');
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                statusDiv.innerHTML = `<p class="success">Positive Reviews: ${data.count || 0} found</p>`;
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">ERROR: ${error.message}</p>`;
+            }
+        }
+
+        async function testNegative() {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            try {
+                statusDiv.innerHTML = '<p class="success">Testing Negative Reviews...</p>';
+                const response = await fetch(API_URL + '?action=negative');
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+                statusDiv.innerHTML = `<p class="success">Negative Reviews: ${data.count || 0} found</p>`;
+            } catch (error) {
+                statusDiv.innerHTML = `<p class="error">ERROR: ${error.message}</p>`;
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', testAPI);
+    </script>
+</body>
+</html>

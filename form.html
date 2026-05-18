@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit a Review</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h1 {
+            color: #2563eb;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #2563eb;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .rating-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.2s;
+            filter: grayscale(100%);
+        }
+        
+        .star:hover,
+        .star.active {
+            filter: grayscale(0%);
+            transform: scale(1.2);
+        }
+        
+        .rating-value {
+            display: inline-block;
+            margin-left: 12px;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .required {
+            color: #ef4444;
+        }
+        
+        .error {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .form-group.has-error .error {
+            display: block;
+        }
+        
+        .form-group.has-error input,
+        .form-group.has-error select,
+        .form-group.has-error textarea {
+            border-color: #ef4444;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            grid-column: 1 / -1;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-back {
+            background: #f3f4f6;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+        
+        .btn-back:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn-reset {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .btn-reset:hover {
+            background: #e5e7eb;
+        }
+        
+        .success-message {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .info-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #78350f;
+        }
+        
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Share Your Review</h1>
+            <p>Help us improve by sharing your feedback</p>
+        </div>
+        
+        <div class="info-box">
+            ℹ️ Your review will be analyzed and displayed in our dashboard. We appreciate honest feedback!
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            ✅ Thank you! Your review has been submitted successfully.
+        </div>
+        
+        <form id="reviewForm">
+            <!-- Name -->
+            <div class="form-group">
+                <label for="name">Your Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                <div class="error">Name is required</div>
+            </div>
+            
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                <div class="error">Valid email is required</div>
+            </div>
+            
+            <!-- Product -->
+            <div class="form-group">
+                <label for="product">Product/Service <span class="required">*</span></label>
+                <select id="product" name="product" required>
+                    <option value="">Select a product...</option>
+                    <option value="Product A">Product A</option>
+                    <option value="Product B">Product B</option>
+                    <option value="Product C">Product C</option>
+                    <option value="Service 1">Service 1</option>
+                    <option value="Other">Other</option>
+                </select>
+                <div class="error">Product selection is required</div>
+            </div>
+            
+            <!-- Rating -->
+            <div class="form-group">
+                <label>Rating <span class="required">*</span></label>
+                <div class="rating-group">
+                    <span class="star" data-rating="1">⭐</span>
+                    <span class="star" data-rating="2">⭐</span>
+                    <span class="star" data-rating="3">⭐</span>
+                    <span class="star" data-rating="4">⭐</span>
+                    <span class="star" data-rating="5">⭐</span>
+                    <span class="rating-value" id="ratingValue">-</span>
+                </div>
+                <input type="hidden" id="rating" name="rating" value="" required>
+                <div class="error">Please select a rating</div>
+            </div>
+            
+            <!-- Comment -->
+            <div class="form-group">
+                <label for="comment">Your Comment <span class="required">*</span></label>
+                <textarea id="comment" name="comment" placeholder="Tell us what you think..." required></textarea>
+                <div class="error">Please share your feedback</div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="reset" class="btn-reset">Clear</button>
+                <button type="button" class="btn-back" onclick="window.location.href='index.html'">Back</button>
+                <button type="submit" class="btn-submit">
+                    Submit Review
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        const form = document.getElementById('reviewForm');
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+        const ratingValue = document.getElementById('ratingValue');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Star rating handler
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = star.getAttribute('data-rating');
+                ratingInput.value = rating;
+                ratingValue.textContent = `${rating} star${rating > 1 ? 's' : ''}`;
+                
+                stars.forEach(s => {
+                    if (s.getAttribute('data-rating') <= rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+                
+                // Clear error if exists
+                const formGroup = document.querySelector('.form-group:has(#rating)');
+                if (formGroup) {
+                    formGroup.classList.remove('has-error');
+                }
+            });
+        });
+        
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Collect form data
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Add timestamps
+            data.timestamp = new Date().toISOString();
+            data.source = 'Web Form';
+            
+            try {
+                // Submit to Zapier webhook
+                // Replace with your actual Zapier webhook URL
+                const zapierUrl = 'YOUR_ZAPIER_WEBHOOK_URL_HERE';
+                
+                if (zapierUrl === 'YOUR_ZAPIER_WEBHOOK_URL_HERE') {
+                    // Development mode - just clear form
+                    console.log('Form data (dev mode):', data);
+                    showSuccess();
+                    form.reset();
+                    ratingValue.textContent = '-';
+                    stars.forEach(s => s.classList.remove('active'));
+                    return;
+                }
+                
+                const response = await fetch(zapierUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Submission failed');
+                }
+                
+                showSuccess();
+                form.reset();
+                ratingValue.textContent = '-';
+                stars.forEach(s => s.classList.remove('active'));
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting review. Please try again.');
+            }
+        });
+        
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const product = document.getElementById('product').value;
+            const rating = document.getElementById('rating').value;
+            const comment = document.getElementById('comment').value.trim();
+            
+            let isValid = true;
+            
+            // Reset all error states
+            document.querySelectorAll('.form-group').forEach(g => g.classList.remove('has-error'));
+            
+            // Validate name
+            if (!name) {
+                document.querySelector('input[name="name"]').parentElement.classList.add('has-error');
+                isValid = false;
+            }
+            
+            // Validate email
+            if (!email || !email.includes('@')) {
+                document.querySelector('input[name="email"]').parentElement.classList.add('has-error');
+                isValid = false;
+            }
+            
+            // Validate product
+            if (!product) {
+                document.querySelector('select[name="product"]').parentElement.classList.add('has-error');
+                isValid = false;
+            }
+            
+            // Validate rating
+            if (!rating) {
+                document.querySelectorAll('.form-group')[3].classList.add('has-error');
+                isValid = false;
+            }
+            
+            // Validate comment
+            if (!comment) {
+                document.querySelector('textarea[name="comment"]').parentElement.classList.add('has-error');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function showSuccess() {
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Intelligence Command Center</title>
+    <link rel="stylesheet" href="dashboard/css/dashboard.css">
+    <link rel="stylesheet" href="dashboard/css/charts.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        
+        <!-- HEADER -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Review Intelligence Command Center</h1>
+                    <p class="tagline">Live customer sentiment, review quality, and trend diagnostics</p>
+                    <div class="header-badges">
+                        <span class="header-badge">Enterprise Analytics</span>
+                        <span class="header-badge">60s Smart Refresh</span>
+                        <span class="header-badge">Apps Script Live Feed</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button id="refreshBtn" class="btn-refresh" title="Manually refresh data">
+                        <span>Refresh Data</span>
+                        <span class="spinner" id="refreshSpinner"></span>
+                    </button>
+                    <div class="last-update">
+                        <span class="label">Last updated:</span>
+                        <span id="lastUpdate">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ALERTS BANNER -->
+        <div id="alertsBanner" class="alerts-banner"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="dashboard-main">
+
+            <!-- SECTION 1: OVERVIEW CARDS -->
+            <section id="statsSection" class="section stats-section">
+                <h2 class="section-title">Executive Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card total-reviews">
+                        <div class="stat-icon">TR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Reviews</div>
+                            <div class="stat-value" id="statTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card positive-reviews">
+                        <div class="stat-icon">PR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Positive Reviews</div>
+                            <div class="stat-value" id="statPositive">0</div>
+                            <div class="stat-percent" id="statPositivePercent">(0%)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card negative-reviews">
+                        <div class="stat-icon">NR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Negative Reviews</div>
+                            <div class="stat-value" id="statNegative">0</div>
+                            <div class="stat-percent" id="statNegativePercent">(0%)</div>
+                        </div>
+                    </div>
+                    <div class="stat-card avg-rating">
+                        <div class="stat-icon">AR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Avg Rating</div>
+                            <div class="stat-value" id="statAvgRating">0.0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card total-reviews">
+                        <div class="stat-icon">UR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Unique Reviews</div>
+                            <div class="stat-value" id="statUnique">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card negative-reviews">
+                        <div class="stat-icon">DR</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Duplicates Removed</div>
+                            <div class="stat-value" id="statDuplicates">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card avg-rating">
+                        <div class="stat-icon">DH</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Data Health</div>
+                            <div class="stat-value stat-status" id="statHealth">OK</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: CHARTS -->
+            <section id="chartsSection" class="section charts-section">
+                <h2 class="section-title">Deep Analytics</h2>
+                <p class="section-subtitle">Distribution, performance trend lines, and reviewer activity diagnostics</p>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3 class="chart-title">Sentiment Distribution</h3>
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">Rating Distribution</h3>
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+                    <div class="chart-container chart-full">
+                        <h3 class="chart-title">Review Trends Over Time</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">Daily Review Volume</h3>
+                        <canvas id="volumeChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">Top Reviewers</h3>
+                        <canvas id="reviewersChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: INSIGHTS -->
+            <section id="insightsSection" class="section insights-section">
+                <h2 class="section-title">Smart Insights</h2>
+                <p class="section-subtitle">Automated analyst commentary from incoming review signals</p>
+                <div id="insightsContent" class="insights-content">
+                    <div class="insight-placeholder">Loading insights...</div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: KEYWORDS -->
+            <section id="keywordsSection" class="section keywords-section">
+                <h2 class="section-title">Keyword Analysis</h2>
+                <p class="section-subtitle">Most recurring language themes across positive and negative feedback</p>
+                <div class="keywords-grid">
+                    <div class="keywords-container">
+                        <h3 class="keywords-title positive">✅ Top Positive Keywords</h3>
+                        <div id="positiveKeywords" class="keywords-list">
+                            <span class="keyword-placeholder">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="keywords-container">
+                        <h3 class="keywords-title negative">❌ Top Negative Keywords</h3>
+                        <div id="negativeKeywords" class="keywords-list">
+                            <span class="keyword-placeholder">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: REVIEW EXPLORER -->
+            <section id="explorerSection" class="section explorer-section">
+                <h2 class="section-title">Review Explorer</h2>
+                <p class="section-subtitle">Search, sort, and inspect individual feedback records with precision</p>
+                
+                <!-- Search & Filter Bar -->
+                <div class="explorer-controls">
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="Search by name or review text..."
+                        >
+                    </div>
+                    <div class="filter-box">
+                        <select id="sortSelect" class="sort-select">
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="rating-desc">Highest Rating</option>
+                            <option value="rating-asc">Lowest Rating</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reviews Grid -->
+                <div class="reviews-grid">
+                    <div class="reviews-column">
+                        <h3 class="column-title">✅ Positive Reviews</h3>
+                        <div id="positiveReviews" class="reviews-container">
+                            <div class="review-placeholder">Loading reviews...</div>
+                        </div>
+                    </div>
+                    <div class="reviews-column">
+                        <h3 class="column-title">❌ Negative Reviews</h3>
+                        <div id="negativeReviews" class="reviews-container">
+                            <div class="review-placeholder">Loading reviews...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="dashboard-footer">
+            <p>Review Intelligence Dashboard | Powered by Google Sheets + Google Apps Script</p>
+            <p class="footer-note">Data updates every 60 seconds with change detection | Analyst-grade read-only view</p>
+        </footer>
+
+    </div>
+
+    <!-- LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <!-- DASHBOARD SCRIPTS -->
+    <script src="dashboard/js/api-client.js"></script>
+    <script src="dashboard/js/charts.js"></script>
+    <script src="dashboard/js/insights.js"></script>
+    <script src="dashboard/js/alerts.js"></script>
+    <script src="dashboard/js/search-filter.js"></script>
+    <script src="dashboard/js/dashboard.js"></script>
+
+</body>
+</html>
